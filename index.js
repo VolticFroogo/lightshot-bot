@@ -1,14 +1,21 @@
 import * as dotenv from 'dotenv';
+
 dotenv.config();
 
 import { Client, GatewayIntentBits } from 'discord.js';
 import { getRandomLightshot } from "./lightshot.js";
-import { initDB } from "./database.js";
+import { getTotalStats, initDB } from "./database.js";
 
-const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
+const client = new Client({intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]});
 
-client.on("ready", () => {
-    console.log(`Logged in as ${client.user.tag}!`);
+async function updateStatus() {
+    let {lightshots, checks} = getTotalStats();
+    await client.user.setPresence({activities: [{name: `${ lightshots }/${ checks } (${ (lightshots / checks * 100).toFixed(1) }%)`}]});
+}
+
+client.on("ready", async () => {
+    console.log(`Logged in as ${ client.user.tag }!`);
+    await updateStatus();
 });
 
 client.on("messageCreate", async (msg) => {
@@ -19,7 +26,8 @@ client.on("messageCreate", async (msg) => {
         return;
 
     let lightshot = await getRandomLightshot();
-    await msg.reply(`Checked ${lightshot.checks} URLs, found: ${lightshot.url}`);
+    await msg.reply(`Checked ${ lightshot.checks } URLs, found: ${ lightshot.url }`);
+    await updateStatus();
 });
 
 (async () => {

@@ -17,7 +17,7 @@ export async function getRandomLightshot() {
     // Add the Lightshot to the database
     await addLightshot(lightshot.id, lightshot.hash, checks);
 
-    return {...lightshot, checks};
+    return { ...lightshot, checks };
 }
 
 // Generate a random Lightshot URL (potentially invalid)
@@ -29,7 +29,7 @@ function generateUrl() {
 
     const url = base + id;
 
-    return {url, id};
+    return { url, id };
 }
 
 // Check if a Lightshot URL is valid
@@ -47,7 +47,7 @@ async function checkLightshot(lightshot) {
         // Query the image URL to see if it's valid
         new URL(src);
 
-        let resp = await axios.get(src, {responseType: "arraybuffer"});
+        let resp = await axios.get(src, { responseType: "arraybuffer" });
         if (resp.status !== 200)
             return false;
 
