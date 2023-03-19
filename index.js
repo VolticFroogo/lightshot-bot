@@ -3,6 +3,7 @@ dotenv.config();
 
 import { Client, GatewayIntentBits } from 'discord.js';
 import { getRandomLightshot } from "./lightshot.js";
+import { initDB } from "./database.js";
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
@@ -21,4 +22,7 @@ client.on("messageCreate", async (msg) => {
     await msg.reply(`Checked ${lightshot.checks} URLs, found: ${lightshot.url}`);
 });
 
-client.login(process.env.DISCORD_TOKEN);
+(async () => {
+    await initDB();
+    await client.login(process.env.DISCORD_TOKEN);
+})();

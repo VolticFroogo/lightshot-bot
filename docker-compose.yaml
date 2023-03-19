@@ -1,0 +1,9 @@
+version: '3.9'
+
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    container_name: lightshot-bot
+    volumes:
+      - ./ssl:/usr/src/lightshot-bot/ssl
